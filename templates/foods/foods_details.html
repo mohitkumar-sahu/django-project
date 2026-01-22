@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h1>Food Details</h1>
+    <div class="row">
+      {% comment %} for image {% endcomment %}
+      <div class="col-md-6">
+        <img src="{{ fooditem.food_img.url }}" alt="no img" width="75%" />
+      </div>
+      {% comment %} for Details {% endcomment %}
+      <div class="col-md-6">
+        <h2>Name : {{ fooditem.name }}</h2>
+        <h3>Price : {{ fooditem.price }}</h3>
+        <h3>Rating : {{ fooditem.rating }}</h3>
+        <h4>Description : {{ fooditem.description }}</h4>
+        <h3>Category : {{ fooditem.categories }}</h3>
+        <br /><br />
+        <a href="{% url 'addtocart' %}" class="btn btn-outline-info">
+          Add to cart
+        </a>
+        <a href="{% url 'customize' %}" class="btn btn-outline-info">
+          Customize
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

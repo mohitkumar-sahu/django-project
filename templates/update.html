@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <h1>Update Profile</h1>
+        <form enctype='' method='POST'>
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{  form1.as_p }}
+            <input type="submit" class='btn btn-primary' value='update'>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

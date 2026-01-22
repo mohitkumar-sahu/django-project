@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+<h1>food details</h1>
+<div class="container">
+  <div class="jumbotron">
+    <div class="nav">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Burger</a></li>
+          <li class="breadcrumb-item"><a href="#">Pasta</a></li>
+          <li class="breadcrumb-item"><a href="#">Pizza</a></li>
+        </ol>
+        {% if request.user.is_authenticated and request.user.userdetails.user_type == 'VENDER' %}
+        <div class="additem ms-auto">
+          <a href="{% url 'addnewfood' %}" class="btn btn-primary">
+            Add items<i class="bi bi-plus-circle"></i>
+          </a>
+        </div>
+        {% endif %}
+      </nav>
+    </div>
+
+    <div class="row">
+      {% for i in fooditem %}
+      <div class="col-md-4">
+        {% if i.food_img %}
+        <a href="{{ i.id }}"
+          ><img src="{{ i.food_img.url }}" alt="food-img" width="75%"
+        /></a>
+        {% else %}
+        <img src="static/defaultimg.png" alt="no-img" />
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
