@@ -1,37 +1,62 @@
-{% extends "base.html" %} {% block content %} {% load static %}
-<h1>food details</h1>
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  /* ===== Food Grid Styles ===== */
+  .food-card {
+      width: 100%;
+      text-align: center;
+  }
+
+  .food-img {
+      width: 85%;
+      height: 250px;          /* same height for all images */
+      object-fit: cover;      /* crop nicely */
+      border-radius: 10px;
+  }
+</style>
+
+<h1>Food Details</h1>
+
 <div class="container">
   <div class="jumbotron">
-    <div class="nav">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Burger</a></li>
-          <li class="breadcrumb-item"><a href="#">Pasta</a></li>
-          <li class="breadcrumb-item"><a href="#">Pizza</a></li>
-        </ol>
-        {% if request.user.is_authenticated and request.user.userdetails.user_type == 'VENDER' %}
-        <div class="additem ms-auto">
-          <a href="{% url 'addnewfood' %}" class="btn btn-primary">
-            Add items<i class="bi bi-plus-circle"></i>
-          </a>
-        </div>
-        {% endif %}
-      </nav>
-    </div>
 
-    <div class="row">
+    <nav aria-label="breadcrumb" class="d-flex">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Burger</a></li>
+        <li class="breadcrumb-item"><a href="#">Pasta</a></li>
+        <li class="breadcrumb-item"><a href="#">Pizza</a></li>
+      </ol>
+
+      {% if request.user.is_authenticated and request.user.userdetails.user_type == 'VENDER' %}
+      <div class="ms-auto">
+        <a href="{% url 'addnewfood' %}" class="btn btn-primary">
+          Add items <i class="bi bi-plus-circle"></i>
+        </a>
+      </div>
+      {% endif %}
+    </nav>
+
+    <!-- FOOD GRID -->
+    <div class="row g-4">
       {% for i in fooditem %}
-      <div class="col-md-4">
-        {% if i.food_img %}
-        <a href="{{ i.id }}"
-          ><img src="{{ i.food_img.url }}" alt="food-img" width="75%"
-        /></a>
-        {% else %}
-        <img src="static/defaultimg.png" alt="no-img" />
-        {% endif %}
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="food-card">
+
+          {% if i.food_img %}
+          <a href="{% url 'food_details' i.id %}">
+            <img src="{{ i.food_img.url }}" alt="food-img" class="food-img">
+          </a>
+          {% else %}
+          <img src="{% static 'defaultimg.png' %}" alt="no-img" class="food-img">
+          {% endif %}
+
+        </div>
       </div>
       {% endfor %}
     </div>
+
   </div>
 </div>
 
