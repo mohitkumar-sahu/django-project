@@ -91,3 +91,4 @@ def allfood(request):
 def addnewfood(request):
     form=AddFoodForm()
     return render(request,"foods/addnewfood.html",{'form':form})
+

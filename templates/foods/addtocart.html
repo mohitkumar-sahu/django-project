@@ -27,7 +27,7 @@
         <p>Price: ₹{{ item.price }}</p>
         <p>Quantity: {{ item.qty }}</p>
       </div>
-      
+
       <!-- ACTIONS -->
       <div class="col-md-3 text-center">
         <div class="d-flex justify-content-center align-items-center gap-2">
@@ -62,9 +62,9 @@
   </div>
 
   <!-- ORDER BUTTON -->
-  <div class="text-center mt-3">
-    <button class="btn btn-success btn-lg">Make an Order</button>
-  </div>
+  <a href="{% url 'make_order' %}" class="btn btn-success btn-lg">
+  Make an Order
+</a>
 
   {% endif %}
 </div>

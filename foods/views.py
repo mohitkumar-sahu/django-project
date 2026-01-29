@@ -1,21 +1,20 @@
-from django.shortcuts import render,redirect
-from foods.models import FoodItems
+from django.shortcuts import render, redirect
+from foods.models import FoodItems, OrderDetails
 from foods.forms import AddFoodForm
+from django.contrib.auth.decorators import login_required
+import uuid
 
-# Create your views here.
-def Food_details(request,id):
-    # Take the single food item details based on the id
-    fooditem=FoodItems.objects.get(id=id)
-    return render(request,"foods/foods_details.html",{'fooditem':fooditem})
+def Food_details(request, id):
+    fooditem = FoodItems.objects.get(id=id)
+    return render(request, "foods/foods_details.html", {'fooditem': fooditem})
 
 def allfood(request):
-    fooditem=FoodItems.objects.all()
-    return render(request,"foods/allfood.html",{'fooditem':fooditem})
+    fooditem = FoodItems.objects.all()
+    return render(request, "foods/allfood.html", {'fooditem': fooditem})
 
 def customize(request, id):
     fooditem = FoodItems.objects.get(id=id)
     return render(request, 'foods/customize.html', {'fooditem': fooditem})
-
 
 def addtocart(request, id):
     food = FoodItems.objects.get(id=id)
@@ -29,12 +28,11 @@ def addtocart(request, id):
             'price': food.price,
             'qty': 1,
             'img': food.food_img.url,
-            'rating':food.rating
+            'rating': food.rating
         }
 
     request.session['cart'] = cart
     return redirect('cart')
-
 
 def addnewfood(request):
     if request.method == "POST":
@@ -44,21 +42,15 @@ def addnewfood(request):
             return redirect('allfood')
     else:
         form = AddFoodForm()
-
     return render(request, "foods/addnewfood.html", {'form': form})
 
 def cart(request):
     cart = request.session.get('cart', {})
-
-    total_price = 0
-    for item in cart.values():
-        total_price += item['price'] * item['qty']
-
-    context = {
+    total_price = sum(item['price'] * item['qty'] for item in cart.values())
+    return render(request, 'foods/addtocart.html', {
         'cart': cart,
         'total_price': total_price
-    }
-    return render(request, 'foods/addtocart.html', context)
+    })
 
 def increase_qty(request, id):
     cart = request.session.get('cart', {})
@@ -68,19 +60,60 @@ def increase_qty(request, id):
 
 def decrease_qty(request, id):
     cart = request.session.get('cart', {})
-
     if id in cart:
         if cart[id]['qty'] > 1:
             cart[id]['qty'] -= 1
         else:
-            del cart[id]   # remove item if qty becomes 0
-
+            del cart[id]
     request.session['cart'] = cart
     return redirect('cart')
-
 
 def remove_item(request, id):
     cart = request.session.get('cart', {})
-    del cart[id]
-    request.session['cart'] = cart
+    if id in cart:
+        del cart[id]
+        request.session['cart'] = cart
     return redirect('cart')
+
+@login_required
+def make_order(request):
+    cart = request.session.get('cart', {})
+    if not cart:
+        return redirect('cart')
+
+    total_price = 0
+    total_qty = 0
+    food_summary = []
+
+    for item in cart.values():
+        total_price += item['price'] * item['qty']
+        total_qty += item['qty']
+        food_summary.append(f"{item['name']} x {item['qty']}")
+
+    order = OrderDetails.objects.create(
+        user=request.user,
+        food_details=", ".join(food_summary),
+        total_qty=total_qty,
+        total_price=total_price
+    )
+
+    # clear cart AFTER saving
+    request.session.pop('cart', None)
+
+    return redirect('order_success', order_id=order.id)
+
+
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+
+@login_required
+def order_success(request, order_id):
+    order = get_object_or_404(OrderDetails, id=order_id, user=request.user)
+
+    return render(request, 'foods/order_success.html', {
+        'orderid': order.id,
+        'order_date': order.created_at if hasattr(order, 'created_at') else timezone.now(),
+        'food_details': order.food_details,
+        'total_price': order.total_price,
+        'total_quantity': order.total_qty,
+    })

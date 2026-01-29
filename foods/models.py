@@ -1,4 +1,7 @@
+import uuid
 from django.db import models
+from django.contrib.auth.models import User
+
 catogeories=[
     ('PIZZA','Pizza'),
     ('BURGER','Burger'),
@@ -34,7 +37,7 @@ class Toppings(models.Model):
     price=models.IntegerField()
     topping_img=models.ImageField()
 
-class sau(models.Model):
+class sauces(models.Model):
     sname=models.CharField(max_length=50)
     simage=models.ImageField(upload_to=None)
     price=models.IntegerField()
@@ -44,4 +47,28 @@ class customized_options(models.Model):
     size_type = models.ForeignKey(SizeChart,related_name="sizecharts",on_delete=models.CASCADE)
     base_type = models.ForeignKey(Basetype,related_name="basetypes",on_delete=models.CASCADE)
     toppings_type = models.ForeignKey(Toppings,related_name="toppings",on_delete=models.CASCADE)
-    sau_type = models.ForeignKey(sau,related_name="saus",on_delete=models.CASCADE)
+    sau_type = models.ForeignKey(sauces,related_name="saus",on_delete=models.CASCADE)
+
+
+
+class OrderDetails(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    food_details = models.TextField()
+    order_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    total_qty = models.IntegerField()
+    total_price = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.order_id} - {self.user.username}"
+
+
+    
+
+# o1=Order_Details()
+# print(o1.order_id)
+
+
+
+
+    
