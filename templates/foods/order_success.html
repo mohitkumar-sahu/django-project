@@ -9,13 +9,10 @@
     <p><strong>Order Date:</strong> {{ order_date }}</p>
     <p><strong>Total Items:</strong> {{ total_quantity }}</p>
     <p><strong>Total Price:</strong> ₹{{ total_price }}</p>
-
     <hr>
-
     <h4>🍽️ Food Items</h4>
     <p>{{ food_details }}</p>
   </div>
-
   <a href="{% url 'allfood' %}" class="btn btn-primary mt-4">
     Proceed to Payment
   </a>
