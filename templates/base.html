@@ -42,13 +42,25 @@
           </li>
 
           {% else %}
+          {% if request.resolver_match.url_name != 'register' %}
           <li class="nav-item"><a href="{% url 'register' %}">Register</a></li>
+          {% endif %}
+          {% if request.resolver_match.url_name != 'login' %}
           <li class="nav-item"><a href="{% url 'login' %}">Login</a></li>
+          {% endif %}
 
           {% endif %}
         </ul>
       </div>
     </nav>
+    {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+      <div class="alert alert-info" role="status">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
     {% block content %} {% endblock %}
+    {{ redirect_to_login_immediately }}
   </body>
 </html>

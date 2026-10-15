@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from foods.models import FoodItems
 from foods.forms import AddFoodForm
+from learnapp.models import UserDetails
 
 # Create your views here.
 def registration(request):
@@ -63,19 +64,23 @@ def profile(request):
 
 @login_required(login_url='login')
 def userupdate(request):
+    # Older or manually-created accounts may not have a related profile yet.
+    profile = UserDetails.objects.filter(user=request.user).first()
+
     if request.method == 'POST':
         form=userUpdateForm(request.POST,instance=request.user)
-        form1=userProfileUpdate(request.POST,request.FILES,instance=request.user.userdetails)
-        if form.is_valid() and form1.is_valid():
+        form1=userProfileUpdate(request.POST,request.FILES,instance=profile)
+        user_is_valid = form.is_valid()
+        profile_is_valid = form1.is_valid()
+        if user_is_valid and profile_is_valid:
             user=form.save()
-            user.save()
             profile=form1.save(commit=False)
             profile.user=user
             profile.save()
             return redirect('profile')
     else:
         form = userUpdateForm(instance=request.user)
-        form1=userProfileUpdate(instance=request.user.userdetails)
+        form1=userProfileUpdate(instance=profile)
 
     context={
         'form':form,

@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 catogeories=[
     ('PIZZA','Pizza'),
     ('BURGER','Burger'),
+    ('PASTA','Pasta'),
     ('FRENCH FRIES','French Fries'),
-    ('DESSERT','Dessart'),
-    ('BREVERAGES','Braverages')
+    ('DESSERT','Dessert'),
+    ('BREVERAGES','Beverages')
 ]
 
 # Create your models here.
@@ -37,10 +38,14 @@ class Toppings(models.Model):
     price=models.IntegerField()
     topping_img=models.ImageField()
 
-class sauces(models.Model):
+class sau(models.Model):
     sname=models.CharField(max_length=50)
     simage=models.ImageField(upload_to=None)
     price=models.IntegerField()
+
+# Keep the existing import used by the admin configuration while matching the
+# model name in the original migration (and its foods_sau table).
+sauces = sau
 
 class customized_options(models.Model):
     food_type = models.CharField(max_length=100,choices=catogeories)

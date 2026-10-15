@@ -1,10 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <div class="jumbotron">
-        {{ fooditem.name }} <h1>Customize your options</h1>
-        
+    <div class="jumbotron mt-4">
+        <h1>Customize {{ fooditem.name }}</h1>
+        <p>Choose a sauce and any toppings for your item.</p>
+
+        <form method="post" class="card card-body" id="customize-form"
+              data-base-price="{{ fooditem.price }}" style="max-width: 640px;">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                {{ form.sauce.label_tag }}
+                {{ form.sauce }}
+                {{ form.sauce.errors }}
+            </div>
+
+            <fieldset class="mb-3">
+                <legend class="fs-6">{{ form.toppings.label }}</legend>
+                {{ form.toppings }}
+                {{ form.toppings.errors }}
+            </fieldset>
+
+            <div class="border-top pt-3 mb-3">
+                <p>Base price: ₹{{ fooditem.price|floatformat:2 }}</p>
+                <p>Customization charges: ₹<span id="customization-total">0.00</span></p>
+                <p class="fw-bold">Total: ₹<span id="customized-total">{{ fooditem.price|floatformat:2 }}</span></p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add customized item to cart</button>
+        </form>
     </div>
 </div>
+{{ customization_prices|json_script:"customization-prices" }}
+<script>
+    const customizeForm = document.getElementById("customize-form");
+    const customizationPrices = JSON.parse(
+        document.getElementById("customization-prices").textContent
+    );
+    const sauceSelect = customizeForm.querySelector('[name="sauce"]');
+    const toppingOptions = customizeForm.querySelectorAll('[name="toppings"]');
+    const basePrice = Number(customizeForm.dataset.basePrice);
+
+    function updateCustomizedTotal() {
+        const selectedValues = [sauceSelect.value];
+        toppingOptions.forEach((option) => {
+            if (option.checked) selectedValues.push(option.value);
+        });
+
+        const customizationTotal = selectedValues.reduce(
+            (total, value) => total + Number(customizationPrices[value] || 0),
+            0
+        );
+        document.getElementById("customization-total").textContent = customizationTotal.toFixed(2);
+        document.getElementById("customized-total").textContent = (basePrice + customizationTotal).toFixed(2);
+    }
+
+    sauceSelect.addEventListener("change", updateCustomizedTotal);
+    toppingOptions.forEach((option) => option.addEventListener("change", updateCustomizedTotal));
+    updateCustomizedTotal();
+</script>
 {% endblock content %}
-c

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -57,7 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'django_auto_logout.middleware.auto_logout',
+    'django_auto_logout.middleware.auto_logout',
 ]
 
 PASSWORD_HASHERS = [
@@ -80,7 +81,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # 'django_auto_logout.context_processors.auto_logout_client',
+                "django_auto_logout.context_processors.auto_logout_client",
             ],
         },
     },
@@ -153,14 +154,12 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media/')
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-#logout
 
-# from datetime import timedelta
 
-# AUTO_LOGOUT = {
-#     'IDLE_TIME': timedelta(minutes=10),
-#     'SESSION_TIME': timedelta(minutes=10),
-#     'MESSAGE': 'The session has expired. Please login again to continue.',
-#     'REDIRECT_TO_LOGIN_IMMEDIATELY': True,
-# }
+AUTO_LOGOUT = {
+    'IDLE_TIME': timedelta(minutes=10),
+    'SESSION_TIME': timedelta(minutes=10),
+    'MESSAGE': 'The session has expired. Please login again to continue.',
+    'REDIRECT_TO_LOGIN_IMMEDIATELY': True,
+}
 

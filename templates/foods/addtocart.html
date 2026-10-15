@@ -25,6 +25,17 @@
         <h4>{{ item.name }}</h4>
         <p>Rating: ⭐ {{ item.rating|default:"4.5" }}</p>
         <p>Price: ₹{{ item.price }}</p>
+        {% if item.sauce %}<p>Sauce: {{ item.sauce }} (+₹{{ item.sauce_price|default:"0" }})</p>{% endif %}
+        {% if item.topping_prices %}
+        <p>Toppings:</p>
+        <ul>
+          {% for topping in item.topping_prices %}
+          <li>{{ topping.name }} (+₹{{ topping.price }})</li>
+          {% endfor %}
+        </ul>
+        {% elif item.toppings %}
+        <p>Toppings: {{ item.toppings|join:", " }}</p>
+        {% endif %}
         <p>Quantity: {{ item.qty }}</p>
       </div>
 

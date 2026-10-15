@@ -11,9 +11,15 @@ class UserForm(forms.ModelForm):
         fields=['username','email','password']
 
 class UserProfileForm(forms.ModelForm):
+    user_type = forms.ChoiceField(
+        choices=UserDetails._meta.get_field('user_type').choices,
+        initial='USER',
+        label='Register as',
+    )
+
     class Meta:
         model=UserDetails
-        fields=['phone','address','street','city','zipcode','userpic']
+        fields=['phone','address','street','city','zipcode','userpic','user_type']
     captcha = ReCaptchaField()
 
 class userUpdateForm(forms.ModelForm):
