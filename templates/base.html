@@ -19,16 +19,34 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
+    <style>
+      .site-navbar .nav-link {
+        font-size: 1.15rem;
+        font-weight: 500;
+      }
+
+      .site-navbar .form-control,
+      .site-navbar .btn {
+        font-size: 1.05rem;
+      }
+    </style>
   </head>
   <body>
-    <nav>
-      <div class="container" style="height: 70px">
-        <ul class="nav navbar">
+    <nav class="site-navbar navbar navbar-expand-lg navbar-dark bg-dark shadow-sm border-bottom border-warning border-3">
+      <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
-          <li class="nav-item"><a href="{% url 'home' %}">Home</a></li>
-          <li class="nav-item"><a href="{% url 'profile' %}">Profile</a></li>
-          <li class="nav-item"><a href="{% url 'allfood' %}">All Food</a></li>
-          <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'allfood' %}">All Food</a></li>
+          {% if user.userdetails.user_type == 'VENDER' %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'vendor_dashboard' %}">My Products</a></li>
+          {% endif %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
           <li class="nav-item position-relative">
             <a href="{% url 'cart' %}" class="nav-link">
               <i class="bi bi-cart"></i> Cart {% if cart_count > 0 %}
@@ -43,16 +61,31 @@
 
           {% else %}
           {% if request.resolver_match.url_name != 'register' %}
-          <li class="nav-item"><a href="{% url 'register' %}">Register</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
           {% endif %}
           {% if request.resolver_match.url_name != 'login' %}
-          <li class="nav-item"><a href="{% url 'login' %}">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
           {% endif %}
 
           {% endif %}
         </ul>
+        {% if user.is_authenticated %}
+        <form class="d-flex" role="search" method="get" action="{% url 'allfood' %}">
+          <input class="form-control me-2" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search food to order" aria-label="Search food to order">
+          <button class="btn btn-outline-warning" type="submit">Search</button>
+        </form>
+        {% endif %}
+        </div>
       </div>
     </nav>
+    {% if user.is_authenticated and user.userdetails.user_type == 'VENDER' %}
+    <div class="bg-primary text-white py-2">
+      <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span><i class="bi bi-shop"></i> Vendor account active</span>
+        <a href="{% url 'vendor_dashboard' %}" class="link-light fw-semibold">Open My Products</a>
+      </div>
+    </div>
+    {% endif %}
     {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}

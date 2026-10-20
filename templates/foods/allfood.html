@@ -23,11 +23,11 @@
     <nav aria-label="Food categories" class="d-flex align-items-center">
       <ol class="breadcrumb">
         <li class="breadcrumb-item {% if not selected_category %}active{% endif %}">
-          <a href="{% url 'allfood' %}" {% if not selected_category %}aria-current="page"{% endif %}>All Foods</a>
+          <a href="{% url 'allfood' %}{% if query %}?q={{ query|urlencode }}{% endif %}" {% if not selected_category %}aria-current="page"{% endif %}>All Foods</a>
         </li>
         {% for category_value, category_label in categories %}
         <li class="breadcrumb-item {% if selected_category == category_value %}active{% endif %}">
-          <a href="{% url 'allfood' %}?category={{ category_value|urlencode }}"
+          <a href="{% url 'allfood' %}?category={{ category_value|urlencode }}{% if query %}&amp;q={{ query|urlencode }}{% endif %}"
              {% if selected_category == category_value %}aria-current="page"{% endif %}>
             {{ category_label }}
           </a>
@@ -44,7 +44,9 @@
       {% endif %}
     </nav>
 
-    {% if selected_category %}
+    {% if query %}
+    <h1>Search results for “{{ query }}”</h1>
+    {% elif selected_category %}
     <h1>{{ selected_category_label }}</h1>
     {% else %}
     <h1>All Foods</h1>
@@ -55,22 +57,36 @@
     <div class="row g-4">
       {% for i in fooditem %}
       <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="food-card">
+        <div class="card h-100 food-card">
 
           {% if i.food_img %}
           <a href="{% url 'food_details' i.id %}">
-            <img src="{{ i.food_img.url }}" alt="food-img" class="food-img">
+            <img src="{{ i.food_img.url }}" alt="{{ i.name }}" class="food-img card-img-top">
           </a>
           {% else %}
-          <img src="{% static 'defaultimg.png' %}" alt="no-img" class="food-img">
+          <a href="{% url 'food_details' i.id %}">
+            <img src="{% static 'defaultimg.png' %}" alt="{{ i.name }}" class="food-img card-img-top">
+          </a>
           {% endif %}
-
+          <div class="card-body d-flex flex-column">
+            <h2 class="h5 card-title">{{ i.name }}</h2>
+            <p class="card-text mb-1">₹{{ i.price }}</p>
+            <p class="card-text text-muted">⭐ {{ i.rating }}</p>
+            <div class="mt-auto d-flex flex-wrap justify-content-center gap-2">
+              <a href="{% url 'addtocart' i.id %}" class="btn btn-primary">Add to cart</a>
+              <a href="{% url 'customize' i.id %}" class="btn btn-outline-primary">Customize</a>
+            </div>
+          </div>
         </div>
       </div>
       {% endfor %}
     </div>
     {% else %}
+    {% if query %}
+    <p class="text-muted mt-3">No foods matched “{{ query }}”. Try another search.</p>
+    {% else %}
     <p class="text-muted mt-3">No foods found in this category yet.</p>
+    {% endif %}
     {% endif %}
 
   </div>

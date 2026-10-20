@@ -3,6 +3,7 @@ from learnapp.forms import UserForm, UserProfileForm, userUpdateForm, userProfil
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from foods.models import FoodItems
 from foods.forms import AddFoodForm
 from learnapp.models import UserDetails
@@ -48,6 +49,7 @@ def user_login(request):
     return render(request,'login.html')
 
 
+@never_cache
 @login_required(login_url='login')
 def home(request):
     allfoods=FoodItems.objects.all()

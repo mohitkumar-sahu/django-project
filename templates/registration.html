@@ -9,7 +9,7 @@
           <h1>Thankyou for registeration..!</h1>
           <p>proceed to <a href="login">login</a></p>
           {% else %}
-          <h1 style="text-align: center;">Registeration Form..!!</h1> <br><br>
+          <h1 style="text-align: center;">Registeration Form..!!</h1> <br>
 
           <form enctype="multipart/form-data" method="POST">
             {% csrf_token %}
@@ -33,7 +33,7 @@
               <div class="col-md-6">{{ form2.userpic | as_crispy_field }}</div>
               <div class="col-md-6">{{ form2.user_type | as_crispy_field }}</div>
             </div>
-            <br /><br />
+            <br />
             {{ form2.captcha }}
             <input type="submit" value="Register" />
           </form>

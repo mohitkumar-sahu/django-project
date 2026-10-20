@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="mb-1">My Products</h1>
+      <p class="text-muted mb-0">Add and manage the food items customers can order.</p>
+    </div>
+    <a href="{% url 'addnewfood' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Add food item
+    </a>
+  </div>
+
+  {% if food_items %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Customization options</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for food in food_items %}
+        <tr>
+          <td>
+            <a href="{% url 'food_details' food.id %}" class="fw-semibold">{{ food.name }}</a>
+          </td>
+          <td>{{ food.get_categories_display }}</td>
+          <td>₹{{ food.price }}</td>
+          <td>{{ food.customization_options.count }}</td>
+          <td>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{% url 'edit_vendor_food' food.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+              <a href="{% url 'manage_customization_options' food.id %}" class="btn btn-sm btn-outline-secondary">Customize options</a>
+              <form method="post" action="{% url 'delete_vendor_food' food.id %}" onsubmit="return confirm('Delete {{ food.name|escapejs }}? This also removes its customization options.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card card-body text-center py-5">
+    <h2 class="h5">You have not added any products yet</h2>
+    <p class="text-muted">Add your first food item to make it available on the menu.</p>
+    <a href="{% url 'addnewfood' %}" class="btn btn-primary mx-auto">Add food item</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock content %}

@@ -26,6 +26,7 @@
         <p>Rating: ⭐ {{ item.rating|default:"4.5" }}</p>
         <p>Price: ₹{{ item.price }}</p>
         {% if item.sauce %}<p>Sauce: {{ item.sauce }} (+₹{{ item.sauce_price|default:"0" }})</p>{% endif %}
+        {% if item.variant %}<p>Flavor / variant: {{ item.variant }} (+₹{{ item.variant_price|default:"0" }})</p>{% endif %}
         {% if item.topping_prices %}
         <p>Toppings:</p>
         <ul>

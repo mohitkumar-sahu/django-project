@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 catogeories=[
     ('PIZZA','Pizza'),
@@ -19,9 +20,46 @@ class FoodItems(models.Model):
     food_img=models.ImageField(upload_to='foodimg/',blank=True,null=True)
     description=models.TextField()
     categories=models.CharField(max_length=100,choices=catogeories)
+    vendor=models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='food_items',
+        null=True,
+        blank=True,
+    )
     
     def __str__(self):
         return self.name
+
+
+class FoodCustomizationOption(models.Model):
+    SAUCE = 'SAUCE'
+    TOPPING = 'TOPPING'
+    FLAVOR = 'FLAVOR'
+    OPTION_TYPES = [
+        (SAUCE, 'Sauce'),
+        (TOPPING, 'Topping'),
+        (FLAVOR, 'Flavor / variant'),
+    ]
+
+    food = models.ForeignKey(
+        FoodItems,
+        on_delete=models.CASCADE,
+        related_name='customization_options',
+    )
+    option_type = models.CharField(max_length=10, choices=OPTION_TYPES)
+    name = models.CharField(max_length=80)
+    price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+    )
+
+    class Meta:
+        ordering = ['option_type', 'name']
+
+    def __str__(self):
+        return f'{self.name} (+₹{self.price}) for {self.food.name}'
 
 class SizeChart(models.Model):
     size_type=models.CharField(max_length=50)
