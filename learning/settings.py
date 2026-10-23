@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,6 +52,7 @@ RECAPTCHA_PUBLIC_KEY = '6LcdCTwsAAAAAJz2FCEUS6xJcmcSqKTcYkftyG8P'
 RECAPTCHA_PRIVATE_KEY = '6LcdCTwsAAAAAFMxY1wWEyDKHyvh3h-DU_v3dLF8'
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhitenoiseMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
