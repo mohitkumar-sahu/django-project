@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-jxuapi=)a46z+#5$+_4!yvph9v=2-cfr^w#nfsyt!=lgk^@fjy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["django-project-ezcf.vercel.app"]
 
 
 # Application definition
